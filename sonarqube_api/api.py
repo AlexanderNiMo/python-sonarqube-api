@@ -74,6 +74,8 @@ class SonarAPIHandler(object):
         :param endpoint: service endpoint as str
         :return: complete url (including host and port) as str
         """
+	if self._port == '':
+            return f'{self._host}{self._base_path}{endpoint}' 
         return '{}:{}{}{}'.format(self._host, self._port, self._base_path, endpoint)
 
     def _make_call(self, method, endpoint, **data):
