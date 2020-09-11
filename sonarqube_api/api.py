@@ -95,7 +95,7 @@ class SonarAPIHandler(object):
         # Get method and make the call
         call = getattr(self._session, method.lower())
         url = self._get_url(endpoint)
-        res = call(url, data=data or {})
+        res = call(url, params=data or {})
 
         # Analyse response status and return or raise exception
         # Note: redirects are followed automatically by requests
@@ -130,7 +130,7 @@ class SonarAPIHandler(object):
 
         while page_num * page_size < n_metrics:
             # Update paging information for calculation
-            res = self._make_call('get', f'{self.ISSUES_ENDPOINT}/search', **params)
+            res = self._make_call('get', f'{self.ISSUES_ENDPOINT}/search', **params).json()
 
             page_num = res['p']
             page_size = res['ps']
@@ -140,7 +140,7 @@ class SonarAPIHandler(object):
             params['p'] = page_num + 1
 
             # Yield rules
-            for metric in res['issue']:
+            for metric in res['issues']:
                 yield metric
 
     def activate_rule(self, key, profile_key, reset=False, severity=None,
