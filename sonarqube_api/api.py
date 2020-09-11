@@ -25,6 +25,7 @@ class SonarAPIHandler(object):
     RULES_ACTIVATION_ENDPOINT = '/api/qualityprofiles/activate_rule'
     RULES_LIST_ENDPOINT = '/api/rules/search'
     RULES_CREATE_ENDPOINT = '/api/rules/create'
+    ISSUES_ENDPOINT = 'api/issues'
 
     # Debt data params (characteristics and metric)
     DEBT_CHARACTERISTICS = (
@@ -118,6 +119,29 @@ class SonarAPIHandler(object):
         else:
             # 5xx is server error
             raise ServerError(res.reason)
+
+    def get_issues(self, **params):
+
+        page_num = 1
+        page_size = 1
+        n_metrics = 2
+
+        params['p'] = page_num
+
+        while page_num * page_size < n_metrics:
+            # Update paging information for calculation
+            res = self._make_call('get', f'{self.ISSUES_ENDPOINT}/search', **params)
+
+            page_num = res['p']
+            page_size = res['ps']
+            n_metrics = res['total']
+
+            # Update page number (next) in queryset
+            params['p'] = page_num + 1
+
+            # Yield rules
+            for metric in res['issue']:
+                yield metric
 
     def activate_rule(self, key, profile_key, reset=False, severity=None,
                       **params):
