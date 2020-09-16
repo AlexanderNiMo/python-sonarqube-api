@@ -25,7 +25,7 @@ class SonarAPIHandler(object):
     RULES_ACTIVATION_ENDPOINT = '/api/qualityprofiles/activate_rule'
     RULES_LIST_ENDPOINT = '/api/rules/search'
     RULES_CREATE_ENDPOINT = '/api/rules/create'
-    ISSUES_ENDPOINT = 'api/issues'
+    ISSUES_ENDPOINT = '/api/issues'
 
     # Debt data params (characteristics and metric)
     DEBT_CHARACTERISTICS = (
